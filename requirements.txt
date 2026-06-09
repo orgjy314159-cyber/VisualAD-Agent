@@ -1,0 +1,12 @@
+streamlit
+opencv-python
+numpy
+pillow
+pydantic
+matplotlib
+python-dotenv
+pytest
+openai
+
+# YOLOv8 检测（可选，取消注释以启用）
+# ultralytics

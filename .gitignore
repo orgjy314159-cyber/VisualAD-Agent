@@ -1,0 +1,42 @@
+# API Key（绝对不能上传）
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.eggs/
+*.egg-info/
+dist/
+build/
+
+# 测试
+.pytest_cache/
+*.egg
+
+# IDE
+.vscode/
+.idea/
+
+# 虚拟环境
+venv/
+.venv/
+env/
+
+# 输出文件（运行时生成）
+outputs/visualizations/
+outputs/reports/
+outputs/records/
+outputs/temp/
+outputs/test_phase2/
+
+# 模型文件（太大，单独管理）
+models/*.pt
+yolov8_weights/
+
+# Streamlit
+.streamlit/
+
+# 系统文件
+.DS_Store
+Thumbs.db

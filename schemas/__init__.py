@@ -1,0 +1,1 @@
+# VisualAD-Agent schemas package

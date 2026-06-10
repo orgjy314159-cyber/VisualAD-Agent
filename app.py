@@ -18,8 +18,12 @@ if _project_root not in sys.path:
 import streamlit as st
 from PIL import Image
 
+from config import load_secrets
 from agent import VisualInspectionAgent
 from utils.file_utils import ensure_dir
+
+# 加载密钥（Streamlit Cloud 从 st.secrets 读取）
+load_secrets()
 
 # 页面配置
 st.set_page_config(
@@ -152,8 +156,9 @@ with st.sidebar:
     yolo_model_path = None
     yolo_confidence = 0.25
     if detection_method == "yolo":
-        from config import list_yolo_models
+        from config import list_yolo_models, YOLO_MODELS_DIR
 
+        # 1) 扫描本地模型
         available_models = list_yolo_models()
         if available_models:
             model_names = [name for name, _ in available_models]
@@ -164,9 +169,22 @@ with st.sidebar:
             )
             yolo_model_path = dict(available_models)[selected_name]
             st.caption(f"路径: {yolo_model_path}")
-        else:
-            st.warning("models/ 目录中未找到 .pt 模型文件，请将模型放入 models/ 文件夹")
-            yolo_model_path = None
+
+        # 2) 本地没有模型 → 允许上传（云端部署场景）
+        if not available_models:
+            uploaded_model = st.file_uploader(
+                "上传 YOLO 模型 (.pt)",
+                type=["pt"],
+                help="本地无模型文件，请上传 .pt 模型",
+            )
+            if uploaded_model is not None:
+                os.makedirs(YOLO_MODELS_DIR, exist_ok=True)
+                yolo_model_path = os.path.join(YOLO_MODELS_DIR, uploaded_model.name)
+                with open(yolo_model_path, "wb") as f:
+                    f.write(uploaded_model.getbuffer())
+                st.success(f"模型已加载: {uploaded_model.name} ({len(uploaded_model.getbuffer()) / 1024 / 1024:.1f} MB)")
+            else:
+                st.info("请上传 .pt 模型文件，或切换到 baseline 方法")
 
         yolo_confidence = st.slider(
             "置信度阈值",

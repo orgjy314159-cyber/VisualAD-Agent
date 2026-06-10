@@ -8,7 +8,7 @@ VisualAD-Agent 全局配置模块。
 import os
 from pathlib import Path
 
-# ---------- 加载 .env ----------
+# ---------- 加载 .env（本地）或 st.secrets（Streamlit Cloud） ----------
 _env_path = Path(__file__).parent / ".env"
 if _env_path.exists():
     try:
@@ -23,6 +23,23 @@ if _env_path.exists():
                     _key, _val = _line.split("=", 1)
                     _val = _val.strip().strip('"').strip("'")
                     os.environ.setdefault(_key.strip(), _val)
+
+
+def load_secrets():
+    """加载密钥（兼容本地 .env 和 Streamlit Cloud st.secrets）。
+
+    调用时机：app.py 启动时（此时 streamlit 已可用）。
+    本地：已在模块加载时从 .env 读取，此函数为空操作。
+    云端：从 st.secrets 读取并写入 os.environ。
+    """
+    try:
+        import streamlit as st
+        if hasattr(st, "secrets") and st.secrets:
+            for key in ["SOPHNET_API_KEY", "DASHSCOPE_API_KEY", "OPENAI_API_KEY"]:
+                if key in st.secrets and not os.environ.get(key):
+                    os.environ[key] = st.secrets[key]
+    except Exception:
+        pass  # 非 streamlit 环境，忽略
 
 # ---------- 项目根目录 ----------
 PROJECT_ROOT: str = os.path.dirname(os.path.abspath(__file__))

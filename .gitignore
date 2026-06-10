@@ -30,8 +30,7 @@ outputs/records/
 outputs/temp/
 outputs/test_phase2/
 
-# 模型文件（太大，单独管理）
-models/*.pt
+# 旧模型目录
 yolov8_weights/
 
 # Streamlit

@@ -1,6 +1,6 @@
 streamlit
-opencv-python
-numpy
+opencv-python-headless
+numpy<2
 pillow
 pydantic
 matplotlib
@@ -9,4 +9,5 @@ pytest
 openai
 
 # YOLOv8 检测（可选，取消注释以启用）
+# torch
 # ultralytics

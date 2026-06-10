@@ -125,20 +125,20 @@ def _detect_yolo(
     try:
         from ultralytics import YOLO
     except ImportError:
-        print(
-            "[WARN] ultralytics 未安装，回退到 baseline 方法。"
-            "\n  安装命令: pip install ultralytics"
+        raise ImportError(
+            "YOLO 模式需要 ultralytics 库，但当前环境未安装。"
+            "\n请确保 requirements.txt 中包含 torch 和 ultralytics。"
+            "\n本地安装: pip install torch ultralytics"
         )
-        return _detect_baseline(image_path)
 
     # 确定模型路径：优先用传入的，其次用配置文件中的
     if model_path is None:
         model_path = YOLO_MODEL_PATH
     if not os.path.exists(model_path):
-        print(
-            f"[WARN] YOLO 模型文件不存在: {model_path}，回退到 baseline 方法。"
+        raise FileNotFoundError(
+            f"YOLO 模型文件不存在: {model_path}"
+            "\n请将 .pt 模型文件放入 models/ 目录，或在侧边栏上传。"
         )
-        return _detect_baseline(image_path)
 
     # 加载模型并推理
     model = YOLO(model_path)
